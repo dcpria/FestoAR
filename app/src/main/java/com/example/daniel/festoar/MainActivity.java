@@ -20,12 +20,14 @@ import java.net.InetSocketAddress;
 public class MainActivity extends ActionBarActivity {
 
     /* CONSTANTS */
-    public static final String Host = "10.50.10.200";
-    public static final int Port = 4508;
+    public static final String Host = "10.50.10.100";
+    public int Port = 4510;
 
     /* VARIABLES */
     private TextView tvConState;
     private TextView tvRobData;
+    private TextView tvAddress;
+    private EditText etPort;
     private String tag = "DEBUG_ONLY";
     MainActivity arg = this;
     RobotData robData = new RobotData();
@@ -34,29 +36,47 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /* Text Fields */
+        /* ########## Text Fields ########## */
         tvConState=(TextView)findViewById(R.id.tvConState);
         tvRobData=(TextView)findViewById(R.id.tvRobData);
+        tvAddress=(TextView)findViewById(R.id.tvAddress);
 
-         /* Buttons */
-        Button ButtConnect = (Button) findViewById(R.id.buttConnect);
+        tvAddress.setText(Host+":"+Port);
+        /* ########## EditText ########## */
+        etPort =(EditText)findViewById(R.id.etPort);
+
+         /* ########## Buttons ########## */
+
+        /* Connect */
+        Button ButtConnect = (Button) findViewById(R.id.buttConnect); // Connect to Robot and pull Data
         ButtConnect.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 RobotThread robotTask = new RobotThread();
+                Port = Integer.parseInt(etPort.getText().toString());
+                tvAddress.setText(Host+":"+Port);
                 robotTask.execute(arg, new InetSocketAddress(Host, Port));
             }
 
         });
 
-        Button ButtTestFunction = (Button) findViewById(R.id.buttTestFunction);
+        /* Test Function */
+        Button ButtTestFunction = (Button) findViewById(R.id.buttTestFunction); // Button to test functions
         ButtTestFunction.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                RobotData RobotDataTest = new XMLParser().XMLStringToRobotData();
+                RobotData RobotDataTest = new XMLParser().debugXMLStringToRobotData(); //use for dummy RobotData
                 //tvRobData.setText(RobotDataTest.RobotName + " " + RobotDataTest.RobotActive);
-                tvRobData.setText(RobotDataTest.toString());
+                //tvRobData.setText(RobotDataTest.toString());
+                try{
+                    robData = (RobotData) RobotDataTest.clone(); //copy debug data to actual robotdata variable
+                    tvRobData.setText(robData.toString());//TODO: debug only -> show actual visualization of data
+                }catch(CloneNotSupportedException e){
+                    //System.out.println("Exception thrown  :" + e);
+                    Log.i(tag, e.toString());
+                    robData.robOnline = false;
+                }
             }
 
         });
@@ -109,7 +129,8 @@ public class MainActivity extends ActionBarActivity {
 
     public void updateDispData(){ //nur aufrufen wenn RobotThread.doInBackground() fertig ist
         this.setConState(robData.robOnline);
-        tvRobData.setText(robData.RobotName);
+        /* Debug */
+        tvRobData.setText(robData.toString());//TODO: debug only -> show actual visualization of data
     }
 
 }
