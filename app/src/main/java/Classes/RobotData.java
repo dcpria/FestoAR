@@ -1,4 +1,4 @@
-package com.example.daniel.festoar;
+package Classes;
 
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.Default;

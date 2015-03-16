@@ -10,18 +10,17 @@ import android.widget.TextView;
 import android.widget.Button;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.os.AsyncTask;
-import android.content.Intent;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.SocketAddress;
+
 import java.net.InetSocketAddress;
+
+import Classes.RobotData;
+import Classes.XMLParser;
 
 public class MainActivity extends ActionBarActivity {
 
     /* CONSTANTS */
-    public static final String Host = "10.50.10.100";
-    public int Port = 4510;
+    public static final String Host = "192.168.0.100";//"10.50.10.100";
+    public int Port = 5000;
 
     /* VARIABLES */
     private TextView tvConState;
